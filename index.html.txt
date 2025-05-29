@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Escala de Serviço - Festa Junina</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    h2 { color: #333; }
+    label, select, input { display: block; margin-top: 10px; }
+    button { margin-top: 15px; padding: 8px 16px; background: #28a745; color: white; border: none; cursor: pointer; }
+    table { margin-top: 20px; border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+    th { background-color: #eee; }
+  </style>
+</head>
+<body>
+  <h2>Escala de Serviço - Festa Junina (1 a 13 de Junho)</h2>
+
+  <label for="nome">Nome do militar:</label>
+  <input type="text" id="nome" required />
+
+  <label for="data">Escolha a data:</label>
+  <select id="data"></select>
+
+  <button onclick="adicionar()">Confirmar Inscrição</button>
+
+  <h3>Escala Preenchida</h3>
+  <table id="tabela">
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Nome</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const dias = {
+      "01/06 – ala B": 2,
+      "02/06 – ala C": 2,
+      "03/06 – ala D": 2,
+      "04/06 – ala A": 2,
+      "05/06 – ala B": 2,
+      "06/06 – ala C": 2,
+      "07/06 – ala D": 2,
+      "08/06 – ala A": 4,
+      "09/06 – ala B": 4,
+      "10/06 – ala C": 4,
+      "11/06 – ala D": 4,
+      "12/06 – ala A": 4,
+      "13/06 – ala B": 4
+    };
+
+    const preenchidos = {};
+
+    const dataSelect = document.getElementById("data");
+    const tabelaBody = document.querySelector("#tabela tbody");
+
+    function atualizarDatasDisponiveis() {
+      dataSelect.innerHTML = "";
+      for (const data in dias) {
+        const ocupados = preenchidos[data] ? preenchidos[data].length : 0;
+        if (ocupados < dias[data]) {
+          const option = document.createElement("option");
+          option.value = data;
+          option.textContent = `${data} (${dias[data] - ocupados} vaga(s) disponível(is))`;
+          dataSelect.appendChild(option);
+        }
+      }
+    }
+
+    function adicionar() {
+      const nome = document.getElementById("nome").value.trim();
+      const data = dataSelect.value;
+
+      if (!nome) {
+        alert("Digite o nome do militar.");
+        return;
+      }
+
+      if (!data) {
+        alert("Selecione uma data disponível.");
+        return;
+      }
+
+      if (!preenchidos[data]) preenchidos[data] = [];
+      if (preenchidos[data].length >= dias[data]) {
+        alert("Essa data já está completa.");
+        return;
+      }
+
+      preenchidos[data].push(nome);
+
+      const row = tabelaBody.insertRow();
+      row.insertCell(0).textContent = data;
+      row.insertCell(1).textContent = nome;
+
+      document.getElementById("nome").value = "";
+      atualizarDatasDisponiveis();
+    }
+
+    atualizarDatasDisponiveis();
+  </script>
+</body>
+</html>
